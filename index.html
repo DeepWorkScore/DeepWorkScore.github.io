@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
+    <title>Deep Work Score</title>
+</head>
+
+<body>
+    <div class="left">
+        <p class="your-score" id="your-score">586</p>
+        <div class="stats">
+            <p id="possible-deep-score">Possible Deep Score: <val>1256</val>
+            </p>
+            <p id="possible-shallow-score">Possible Shallow Score: <val>1256</val>
+            </p>
+            <br />
+            <p id="shallow-score">Your Shallow Score: <val>1256</val>
+            </p>
+            <p id="study-score">Your Study Score: <val>1256</val>
+            </p>
+            <p id="deep-score">Your Deep Score: <val>1256</val>
+            </p>
+        </div>
+        <br />
+        <div class="stats">
+            <p class="productive-day" id="productive-day">Your most productive day is: <val>Wendesday</val>
+            </p>
+        </div>
+        <button class="add-score" id="myBtn">
+            <p>+</p>
+        </button>
+    </div>
+    <div class="right">
+        <p class="title">Estimated Scores Of Other People:</p>
+        <div class="person" id="ElonMusk">
+            <img src="./assets/images/people/ElonMusk.png" alt="Elon Musk" class="person-img">
+            <p class="person-name">Elon Musk</p>
+            <p class="person-score">1184</p>
+        </div>
+        <div class="person" id="TimCook">
+            <img src="./assets/images/people/TimCook.jpeg" alt="Mark Zuckerberg" class="person-img">
+            <p class="person-name">Tim Cook</p>
+            <p class="person-score">1184</p>
+        </div>
+        <div class="person" id="MarkZuckerberg">
+            <img src="./assets/images/people/markzuckerberg.jpeg" alt="Mark Zuckerberg" class="person-img">
+            <p class="person-name">Mark Zuckerberg</p>
+            <p class="person-score">1184</p>
+        </div>
+        <div class="person" id="SundarPichai">
+            <img src="./assets/images/people/SundarPichai.jpg" alt="Sunday Pichai" class="person-img">
+            <p class="person-name">Sundar Pichai</p>
+            <p class="person-score">1184</p>
+        </div>
+        <div class="person" id="MohammadHajikandi">
+            <img src="./assets/images/people/Hajikandi.jpeg" alt="Sunday Pichai" class="person-img">
+            <p class="person-name">Mohammad</p>
+            <p class="person-score">1184</p>
+        </div>
+    </div>
+
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p class="title">Add a work</p>
+            <form onsubmit="module.addToScore()" id="ScoreForm">
+                <input type="radio" id="ShallowWork" name="work_type" value="ShallowWork" required>
+                <label for="ShallowWork">Shallow Work</label><br>
+
+                <input type="radio" id="StudyWork" name="work_type" value="StudyWork" required>
+                <label for="StudyWork">Study</label><br>
+
+                <input type="radio" id="DeepWork" name="work_type" value="DeepWork" required>
+                <label for="DeepWork">Deep Work</label><br>
+
+                <input type="number" id="hours" name="hours" min="1" max="10" required><br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+
+    </div>
+</body>
+
+<script type="module">
+    import Cookies from './packages/js.cookie.mjs';
+
+    let today = new Date().toISOString().slice(0, 10);
+    if (Cookies.get("FirstTime") === undefined) {
+        Cookies.set("FirstTime", "No");
+
+        Cookies.set("Score", "0");
+
+        Cookies.set("StartDate", today);
+        Cookies.set("ShallowScore", "0");
+        Cookies.set("StudyScore", "0");
+        Cookies.set("DeepScore", "0");
+
+        var daysObj = {
+            "Saturday": 1,
+            "Sunday": 0,
+            "Monday": 0,
+            "Tuesday": 0,
+            "Wednesday": 0,
+            "Thursday": 0,
+            "Friday": 0
+        }
+        Cookies.set("DaysScore", JSON.stringify(daysObj));
+    }
+
+    var object_score = document.getElementById("your-score");
+    object_score.innerText = Cookies.get("Score");
+
+    var object_shallowScore = document.getElementById("shallow-score").children[0];
+    object_shallowScore.innerText = Cookies.get("ShallowScore");
+    var object_studyScore = document.getElementById("study-score").children[0];
+    object_studyScore.innerText = Cookies.get("StudyScore");
+    var object_deepScore = document.getElementById("deep-score").children[0];
+    object_deepScore.innerText = Cookies.get("DeepScore");
+
+    let daysScore = JSON.parse(Cookies.get("DaysScore"));
+    var highestValue = 0;
+    var highestDay = "Wednesday";
+    for (const day in daysScore) {
+        if (daysScore[day] > highestValue) {
+            highestValue = daysScore[day];
+            highestDay = day;
+        }
+    }
+    var object_productiveDay = document.getElementById("productive-day").children[0];
+    object_productiveDay.innerText = highestDay;
+
+    var date1 = new Date(today);
+    var date2 = new Date(Cookies.get("StartDate"));
+    var diffDays = parseInt((date1 - date2) / (1000 * 60 * 60 * 24), 10);
+
+    var object_possibleDeepScore = document.getElementById("possible-deep-score").children[0];
+    object_possibleDeepScore.innerText = diffDays * 30;
+
+    var object_possibleShallowScore = document.getElementById("possible-shallow-score").children[0];
+    object_possibleShallowScore.innerText = diffDays * 12;
+
+
+    var person_elonmusk = document.getElementById("ElonMusk").children[2];
+    person_elonmusk.innerText = diffDays * ((3 * 10) + (14));
+
+    var person_markzuckerberg = document.getElementById("MarkZuckerberg").children[2];
+    person_markzuckerberg.innerText = diffDays * ((3 * 10) + (4));
+
+    var person_timcook = document.getElementById("TimCook").children[2];
+    person_timcook.innerText = diffDays * ((3 * 10) + (8));
+
+    var person_sundaypichai = document.getElementById("SundarPichai").children[2];
+    person_sundaypichai.innerText = diffDays * ((3 * 10) + (4));
+
+    var person_mohammadhajikandi = document.getElementById("MohammadHajikandi").children[2];
+    person_mohammadhajikandi.innerText = diffDays * ((4 * 2) + (1));
+</script>
+
+<script>
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("myBtn");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on the button, open the modal
+    btn.onclick = function () {
+        modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    const module = {};
+</script>
+<script type="module">
+    import { addToScore } from "./addScore.js";
+    module.addToScore = addToScore;
+</script>
+
+</html>
